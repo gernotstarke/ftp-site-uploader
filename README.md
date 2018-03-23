@@ -17,6 +17,11 @@ that can handle directory trees
 * the container starts the script 'upload.sh' upon startup, that queries
   for username and password.
 
+## How to use
+
+Run the container from a shell or script with the following command:
+
+    docker -it run gernotstarke/ftp-uploader:0.2 <site> <server> <localdir>
 
 ## License
 
@@ -48,3 +53,5 @@ Prerequisites: You need to be logged into Dockerhub in your current shell...
 Optionally provide a version label:
 
     `docker push gernotstarke/ftp-uploader:0.8`
+
+3. Find [detailed instructions on pushing to Dockerhub](https://docs.docker.com/docker-cloud/builds/push-images/) 
