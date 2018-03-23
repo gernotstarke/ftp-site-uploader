@@ -1,4 +1,4 @@
-# ![](./icon.png) Upload a locally created website to ftp server
+# ![](./icon.png | width=100) Upload a locally created website to ftp server
 
 Provides a Docker container which can upload a local directory tree to
 a remote ftp server.
