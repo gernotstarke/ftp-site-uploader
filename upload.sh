@@ -81,7 +81,6 @@ function upload_to_production {
   ncftpput -R -v -u $username -p $password $server . $localdir
   echo "${RESET}...done"
 
-
 }
 
 ##
