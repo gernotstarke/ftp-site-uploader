@@ -1,4 +1,4 @@
-# ![](./icon.png){:width="150px"} Dockerized ftp upload
+# ![](./icon.png)Dockerized ftp upload
 
 Provides a Docker container which can upload a local directory tree to
 a remote ftp server.
