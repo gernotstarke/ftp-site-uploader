@@ -65,15 +65,23 @@ function upload_to_production {
   echo $BLUE
 
 
-  #ncftp is a fancy (and free) ftp program that allows for recursive put operation
+  # ncftp is a fancy (and free) ftp program that allows for recursive put operation
   # see https://www.ncftp.com/ncftp/doc/ncftpput.html
-  # options used here:
+  #
+  # Example:
+  # ncftpput -R -v -u "username" -p "passwordHere" <remote-server> <remote-dir> <local-dir>
+  #
+  # where:
   # -u username
   # -p password
   # -R recursive
-  # -C copy directory tree
-  echo ncftpput -u $username -p $password $server -R $localdir
+  # <remote-server> : Remote ftp server (use FQDN or IP).
+  # <remote-dir> : Remote ftp server directory where all files and subdirectories will be uploaded.
+  # <local-dir> : Local directory (or list of files) to upload remote ftp server directory
+  ncftpput -R -v -u $username -p $password $server . $localdir
   echo "${RESET}...done"
+
+
 }
 
 ##
