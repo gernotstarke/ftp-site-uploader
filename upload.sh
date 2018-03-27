@@ -9,27 +9,10 @@
 #
 # the following three parameters
 #
-# $1 site (e.g. aim42.org)
-# $2 server, e.g.
-# $3 localdir, the local directory which shall be uploaded to the server
-
-# check input params
-# ==================
-
-if [ $# -lt 3 ]
-  then
-  echo "too few arguments given, expect site, server and localdir (in that order)"
-  exit 1
-fi
-
-# 1. check argument number
-if [ $# -eq 3 ]
-  then
-    # correct number of arguments given
-  site=$1     # i.e. aim42.org
-  server=$2   # "wp290.webpack.hosteurope.de"
-  localdir=$3 # "zz-production-site"
-fi
+# $1 SITE (e.g. aim42.org)
+# $2 SERVER, e.g. xy.webpack.hosteurope.de
+# $3 localdir, the local directory which shall be uploaded to SERVER
+# $4 REMOTEDIR, directory on remote SERVER
 
 
 # some colors to highlight certain output
@@ -38,13 +21,43 @@ RED=`tput setaf 5`
 BLUE=`tput setaf 6`
 RESET=`tput sgr0`
 
+# show given parameters
+# =====================
+echo "called with parameters: $@"
+
+
+# check input params
+# ==================
+
+if [ $# -lt 4 ]
+  then
+  echo "too few arguments given, expect SITE, SERVER, LOCALDIR and REMOTEDIR (in that order)"
+  exit 1
+fi
+
+if [ $# -gt 4 ]
+  then
+  echo "too many arguments given, expect SITE, SERVER, LOCALDIR and REMOTEDIR (in that order)"
+  exit 1
+fi
+
+
+if [ $# -eq 4 ]
+  then
+    SITE=$1      # i.e. aim42.org
+    SERVER=$2    # i.e. wp290.webpack.hosteurope.de
+    localdir=$3  # i.e. zz-production-site
+    REMOTEDIR=$4 # i.e. .
+fi
+
+
 ##
 ## utility functions
 ##
 
 function upload_to_production {
-  echo "I need the ${GREEN} ftp credentials ${RESET} to authenticate at $server."
-  read -p "Enter ftp ${RED}username ${RESET} for ${site}: " username
+  echo "I need the ${GREEN} ftp credentials ${RESET} to authenticate at ${SERVER}."
+  read -p "Enter ftp ${RED}username ${RESET} for ${SITE}: " username
 
   # check if credentials are plausible - assumption: empty strings are not allowed
   if [[ -z $username ]] ; then
@@ -60,9 +73,8 @@ function upload_to_production {
   fi
 
 
-  echo "Thanx. Now using ${RED} $username:$password ${RESET}to authenticate at $server."
+  echo "Thanx. Now using ${RED} $username:$password ${RESET}to authenticate at $SERVER."
   echo
-  echo $BLUE
 
 
   # ncftp is a fancy (and free) ftp program that allows for recursive put operation
@@ -78,8 +90,15 @@ function upload_to_production {
   # <remote-server> : Remote ftp server (use FQDN or IP).
   # <remote-dir> : Remote ftp server directory where all files and subdirectories will be uploaded.
   # <local-dir> : Local directory (or list of files) to upload remote ftp server directory
-  ncftpput -R -v -u $username -p $password $server . $localdir
-  echo "${RESET}...done"
+
+  echo "using the following commands to upload: $BLUE"
+  echo cd $localdir
+  echo ncftpput -R -v -u $username -p $password $SERVER $REMOTEDIR .
+  echo $RESET
+
+  cd $localdir
+  ncftpput -R -v -u $username -p $password $SERVER $REMOTEDIR .
+  echo "...done"
 
 }
 
@@ -90,12 +109,13 @@ function upload_to_production {
 echo
 echo "Docker container to upload your (generated) website:"
 echo "===================================================="
-echo "You want to ${BLUE}$site ${RESET},"
-echo "residing on server ${BLUE}$server ${RESET}"
-echo "uploading files from ${BLUE}$localdir ${RESET}"
+echo "You want to upload to ${BLUE}$SITE ${RESET},"
+echo "residing on server ${BLUE}$SERVER ${RESET}"
+echo "uploading files from directory ${BLUE}$localdir ${RESET}"
 echo "Please select:"
 echo
-echo "${RED}(u)upload ${RESET} uploads $localdir to ${BLUE}server${RESET}."
+echo "${RED}(u)upload ${RESET} uploads $localdir to ${BLUE} $SERVER/$REMOTEDIR ${RESET}."
+echo "${BLUE}(q)uit ${RESET} quit..."
 echo "====================================================="
 echo
 
